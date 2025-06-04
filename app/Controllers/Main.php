@@ -24,6 +24,7 @@ class Main extends BaseController
 
     public function index()
 {
+    // ziskame vsechny rocniky zavodu elite muzu, včetně jmena zavodu a typu uci tour
     $raceYears = $this->raceYearModel
         ->select('cyklo_race_year.*, cyklo_race.default_name, cyklo_race.country AS race_country, cyklo_uci_tour_type.name AS uci_tour_name')
         ->join('cyklo_race', 'cyklo_race.id = cyklo_race_year.id_race')
@@ -34,9 +35,12 @@ class Main extends BaseController
         ->findAll();
 
     $races = [];
+
+    // seskupeni rocniku podle zavodu
     foreach ($raceYears as $year) {
         $raceId = $year->id_race;
 
+        // pokud zavod jeste neni v poli, vytvorime ho
         if (!isset($races[$raceId])) {
             $races[$raceId] = (object)[
                 'info' => (object)[
@@ -47,26 +51,29 @@ class Main extends BaseController
             ];
         }
 
-        // přidej do objektu year název UCI Tour
+        // pokud neni uci tour typ, nastavime pomlcku
         $year->uci_tour_name = $year->uci_tour_name ?? '-';
 
+        // pridame rocnik k danemu zavodu
         $races[$raceId]->years[] = $year;
     }
 
+    // predani dat do view
     return view('index', [
         'races' => $races
     ]);
 }
 
-
-    public function rocnik($id)
+public function rocnik($id)
 {
+    // ziskame detail rocniku podle id
     $year = $this->raceYearModel
         ->select('cyklo_race_year.*, cyklo_race.default_name, cyklo_race.country AS race_country')
         ->join('cyklo_race', 'cyklo_race.id = cyklo_race_year.id_race')
         ->where('cyklo_race_year.id', $id)
         ->first();
 
+    // ziskame top 20 vysledku pro dany rocnik
     $results = $this->resultModel
         ->select('cyklo_result.*, CONCAT(cyklo_rider.first_name, " ", cyklo_rider.last_name) AS rider_name')
         ->join('cyklo_rider', 'cyklo_rider.id = cyklo_result.id_rider', 'left')
@@ -75,22 +82,11 @@ class Main extends BaseController
         ->limit(20)
         ->findAll();
 
-    // Pokud chcete zobrazit "čistý" tým z team_link, můžeme extrahovat část za lomítkem
-    foreach ($results as &$result) {
-        if (!empty($result->team_link)) {
-            // např. "team/ethiopia-2023" => "ethiopia-2023"
-            $parts = explode('/', $result->team_link);
-            $result->team_name = end($parts);
-        } else {
-            $result->team_name = '-';
-        }
-    }
-
+    // predani dat do view
     return view('rocnik', [
         'year' => $year,
         'results' => $results
     ]);
 }
-
 
 }

@@ -56,57 +56,55 @@
     <h1 class="mb-4">Elite zavody muzu</h1> 
 
     <!-- cyklus pres zavody -->
-    <?php foreach ($races as $race): ?>
-        <div class="card">
-            <div class="card-header">
-                <!-- pokud ma zavod zemi, zobrazime vlajku -->
-                <?php if (!empty($race->info->country)): ?>
-                    <!-- pouzivame kod zeme pro flag-icons, prevede se na mala pismena -->
-                    <span class="fi fi-<?= strtolower(esc($race->info->country)) ?>"></span>&nbsp;
-                <?php endif; ?>
-                <!-- zobrazime nazev zavodu -->
-                <?= esc($race->info->default_name) ?>
-            </div>
-            <div class="card-body">
-                <!-- tabulka rocniku daneho zavodu -->
-                <table class="table table-sm table-dark table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>Rocnik</th>
-                            <th>Datum</th>
-                            <th>UCI Tour</th>
-                            <th>Top 20 vysledku</th>
-                        </tr>
-                    </thead>
+<?php foreach ($races as $race): ?>
+    <div class="card">
+        <div class="card-header">
+            <?php if (!empty($race->info->country)): ?>
+                <!-- vlajka zeme podle kodu z databaze -->
+                <span class="fi fi-<?= strtolower(esc($race->info->country)) ?>"></span>&nbsp;
+            <?php endif; ?>
+            <!-- nazev zavodu -->
+            <?= esc($race->info->default_name) ?>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Rocnik</th>
+                        <th>Datum</th>
+                        <th>UCI Tour</th>
+                        <th>Top 20 vysledku</th>
+                    </tr>
+                </thead>
 <tbody>
-<!-- cyklus pres vsechny rocniky tohoto zavodu -->
+<!-- cyklus pres rocniky daneho zavodu -->
 <?php foreach ($race->years as $year): ?>
     <tr>
-        <!-- klikatelny odkaz na stranku s vysledky pro dany rocnik -->
+        <!-- odkaz na detail rocniku -->
         <td>
             <a href="<?= base_url('rocnik/' . $year->id) ?>">
                 <?= esc($year->real_name) ?>
             </a>
         </td>
 
-        <!-- datum zacatku a konce -->
+        <!-- zobrazeni datumu zacatku a konce -->
         <td><?= esc($year->start_date) ?> – <?= esc($year->end_date) ?></td>
 
-        <!-- UCI tour nebo pomlcka -->
+        <!-- zobrazeni uci tour nebo pomlcky -->
         <td><?= esc($year->uci_tour_name ?? '-') ?></td>
 
-        <!-- misto tabulky vysledku jen text s odkazem -->
+        <!-- odkaz na vysledky -->
         <td>
             <a href="<?= base_url('rocnik/' . $year->id) ?>">Zobrazit vysledky</a>
         </td>
     </tr>
 <?php endforeach; ?>
 </tbody>
-
-                </table>
-            </div>
+            </table>
         </div>
-    <?php endforeach; ?>
+    </div>
+<?php endforeach; ?>
+
 </div>
 
 

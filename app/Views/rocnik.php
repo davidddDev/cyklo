@@ -12,14 +12,14 @@
     <style>
         body {
             background-color: #10141a;
-            color: #e0e0e0; /* základní barva textu - světle šedá */
+            color: #e0e0e0; 
             font-family: "Segoe UI", sans-serif;
         }
         table {
             width: 100%;
             background-color: #1b1f27;
             border-collapse: collapse;
-            color: #fff; /* bílý text v tabulce */
+            color: #fff; 
         }
         thead {
             background-color: #242a35;
@@ -68,35 +68,40 @@
 <body>
 <div class="container mt-4">
 
-    <h1>Výsledky ročníku: <?= esc($year->default_name) ?> – <?= esc($year->real_name) ?></h1>
-    <p><?= esc($year->start_date) ?> – <?= esc($year->end_date) ?></p>
+<!-- nadpis rocniku se jmenem zavodu a rocniku -->
+<h1>Výsledky ročníku: <?= esc($year->default_name) ?> – <?= esc($year->real_name) ?></h1>
+<p><?= esc($year->start_date) ?> – <?= esc($year->end_date) ?></p>
 
-    <?php if (!empty($results)): ?>
-        <table>
-            <thead>
+<!-- pokud existuji vysledky, zobrazime tabulku -->
+<?php if (!empty($results)): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>Pořadí</th>
+                <th>Jezdec</th>
+                <th>Tým</th>
+                <th>Čas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- cyklus pres vysledky -->
+            <?php foreach ($results as $result): ?>
                 <tr>
-                    <th>#</th>
-                    <th>Jezdec</th>
-                    <th>Tým</th>
-                    <th>Čas</th>
+                    <td><?= esc($result->rank) ?></td>
+                    <td><?= esc($result->rider_name ?? '-') ?></td>
+                    <td><?= esc($result->team_name ?? '-') ?></td>
+                    <td><?= esc($result->time) ?></td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($results as $result): ?>
-                    <tr>
-                        <td><?= esc($result->rank) ?></td>
-                        <td><?= esc($result->rider_name ?? '-') ?></td>
-                        <td><?= esc($result->team_name ?? '-') ?></td>
-                        <td><?= esc($result->time) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p>Výsledky nejsou k dispozici.</p>
-    <?php endif; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <!-- pokud nejsou vysledky, zobrazime hlasku -->
+    <p>Výsledky nejsou k dispozici.</p>
+<?php endif; ?>
 
-    <a href="<?= base_url() ?>" class="back-link">← Zpět na přehled</a>
+<!-- odkaz zpet na hlavni stranku -->
+<a href="<?= base_url() ?>" class="back-link">← Zpět na přehled</a>
 
 </div>
 </body>
